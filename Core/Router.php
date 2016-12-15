@@ -109,7 +109,6 @@ class Router
         if ($this->match($url)) {
             $controller = $this->params['controller'];
             $controller = $this->convertToStudlyCaps($controller);
-            //$controller = "App\Controllers\\$controller";
             $controller = $this->getNamespace() . $controller;
 
             if (class_exists($controller)) {
@@ -122,13 +121,16 @@ class Router
                     $controller_object->$action();
 
                 } else {
-                    echo "Method $action (in controller $controller) not found";
+                    //echo "Method $action (in controller $controller) not found";
+                    throw new \Exception("Method $action (in controller $controller) not found");
                 }
             } else {
-                echo "Controller class $controller not found";
+                //echo "Controller class $controller not found";
+                throw new \Exception("Controller class $controller not found");
             }
         } else {
-            echo 'No route matched.';
+            //echo 'No route matched.';
+            throw new \Exception('No route matched.');
         }
     }
 
@@ -195,18 +197,21 @@ class Router
 
         return $url;
     }
+
     /**
-    *Get the namespace for the controller class. The namespace defined in the 
-    *route parameters is added if present.
-    *
-    *@return string The requested URL
-    */
+     * Get the namespace for the controller class. The namespace defined in the
+     * route parameters is added if present.
+     *
+     * @return string The request URL
+     */
     protected function getNamespace()
     {
         $namespace = 'App\Controllers\\';
-        if (array_key_exists('namespace', $this->params)){
+
+        if (array_key_exists('namespace', $this->params)) {
             $namespace .= $this->params['namespace'] . '\\';
         }
+
         return $namespace;
     }
 }
